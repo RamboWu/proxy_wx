@@ -7,6 +7,6 @@ newWindowBtn.addEventListener('click', function (event) {
   const modalPath = path.join('./src/windows/views/mainwindow.html')
   let win = new BrowserWindow({ width: 400, height: 320 })
   win.on('close', function () { win = null })
-  win.loadURL(modalPath)
+  win.loadURL('../views/mainwindow.html')
   win.show()
 })
