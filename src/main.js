@@ -1,149 +1,57 @@
 'use strict';
 
 const path = require('path');
-const {app, ipcMain} = require('electron');
+const {app, ipcMain, BrowserWindow} = require('electron');
 
-const UpdateHandler = require('./handlers/update');
-const Common = require('./common');
-const AppConfig = require('./configuration');
+const debug = /--debug/.test(process.argv[2])
 
-const SplashWindow = require('./windows/controllers/splash');
-const WeChatWindow = require('./windows/controllers/wechat');
-const SettingsWindow = require('./windows/controllers/settings')
-const AppTray = require('./windows/controllers/app_tray');
+var mainWindow = null
 
-class ElectronicWeChat {
-  constructor() {
-    this.wechatWindow = null;
-    this.splashWindow = null;
-    this.settingsWindow = null;
-    this.tray = null;
-  }
+function initialize () {
 
-  init() {
-    if(this.checkInstance()) {
-      this.initApp();
-      this.initIPC();
-    } else {
-      app.quit();
+  function createWindow () {
+    var windowOptions = {
+      width: 1080,
+      minWidth: 680,
+      height: 840,
+      title: app.getName()
     }
-  }
-  checkInstance() {
-    if (AppConfig.readSettings('multi-instance') === 'on') return true;
-    return !app.makeSingleInstance((commandLine, workingDirectory) => {
-      if(this.splashWindow && this.splashWindow.isShown){
-        this.splashWindow.show();
-        return
-      }
-      if(this.wechatWindow){
-        this.wechatWindow.show();
-      }
-      if(this.settingsWindow && this.settingsWindow.isShown){
-        this.settingsWindow.show();
-      }
-    });
 
-  }
-  initApp() {
-    app.on('ready', ()=> {
-      this.createSplashWindow();
-      this.createWeChatWindow();
-      this.createTray();
+    mainWindow = new BrowserWindow(windowOptions)
+    mainWindow.loadURL(path.join('file://', __dirname, '/windows/views/mainwindows.html'))
 
-      if (!AppConfig.readSettings('language')) {
-        AppConfig.saveSettings('language', 'en');
-        AppConfig.saveSettings('prevent-recall', 'on');
-        AppConfig.saveSettings('icon', 'black');
-        AppConfig.saveSettings('multi-instance','on');
-      }
-    });
+    // Launch fullscreen with DevTools open, usage: npm run debug
+    if (debug) {
+      mainWindow.webContents.openDevTools()
+      mainWindow.maximize()
+      require('devtron').install()
+    }
 
-    app.on('activate', () => {
-      if (this.wechatWindow == null) {
-        this.createWeChatWindow();
-      } else {
-        this.wechatWindow.show();
-      }
-    });
-  };
-
-  initIPC() {
-    ipcMain.on('badge-changed', (event, num) => {
-      if (process.platform == "darwin") {
-        app.dock.setBadge(num);
-        if (num) {
-          this.tray.setTitle(` ${num}`);
-        } else {
-          this.tray.setTitle('');
-        }
-      } else if (process.platform === "linux" || process.platform === "win32") {
-          app.setBadgeCount(num * 1);
-          this.tray.setUnreadStat((num * 1 > 0)? 1 : 0);
-      }
-    });
-
-    ipcMain.on('user-logged', () => {
-      this.wechatWindow.resizeWindow(true, this.splashWindow)
-    });
-
-    ipcMain.on('wx-rendered', (event, isLogged) => {
-      this.wechatWindow.resizeWindow(isLogged, this.splashWindow)
-    });
-
-    ipcMain.on('log', (event, message) => {
-      console.log(message);
-    });
-
-    ipcMain.on('reload', (event, repetitive) => {
-      if (repetitive) {
-        this.wechatWindow.loginState.current = this.wechatWindow.loginState.NULL;
-        this.wechatWindow.connectWeChat();
-      } else {
-        this.wechatWindow.loadURL(Common.WEB_WECHAT);
-      }
-    });
-
-    ipcMain.on('update', (event, message) => {
-      let updateHandler = new UpdateHandler();
-      updateHandler.checkForUpdate(`v${app.getVersion()}`, false);
-    });
-
-    ipcMain.on('open-settings-window', (event, message) => {
-      if (this.settingsWindow) {
-        this.settingsWindow.show();
-      } else {
-        this.createSettingsWindow();
-        this.settingsWindow.show();
-      }
-    });
-
-    ipcMain.on('close-settings-window', (event, messgae) => {
-      this.settingsWindow.close();
-      this.settingsWindow = null;
+    mainWindow.on('closed', function () {
+      mainWindow = null
     })
-  };
-
-  createTray() {
-    this.tray = new AppTray(this.splashWindow, this.wechatWindow);
   }
 
-  createSplashWindow() {
-    this.splashWindow = new SplashWindow();
-    this.splashWindow.show();
-  }
+  app.on('ready', function () {
+    createWindow()
+  })
 
-  createWeChatWindow() {
-    this.wechatWindow = new WeChatWindow();
-  }
+  app.on('window-all-closed', function () {
+    if (process.platform !== 'darwin') {
+      app.quit()
+    }
+  })
 
-  createSettingsWindow() {
-    this.settingsWindow = new SettingsWindow();
-  }
-
+  app.on('activate', function () {
+    if (mainWindow === null) {
+      createWindow()
+    }
+  })
 }
 
-//new ElectronicWeChat().init();
+initialize()
 
+/*
 const Weixinbot = require('weixinbot')
 
 // will send qrcode to your email address
@@ -159,4 +67,4 @@ bot.on('friend', (msg) => {
   bot.sendText(msg.FromUserName, 'Got it')
 })
 
-bot.run()
+bot.run()*/
