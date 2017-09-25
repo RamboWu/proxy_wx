@@ -49,9 +49,6 @@ function initialize () {
   })
 }
 
-initialize()
-
-/*
 const Weixinbot = require('weixinbot')
 
 // will send qrcode to your email address
@@ -67,4 +64,17 @@ bot.on('friend', (msg) => {
   bot.sendText(msg.FromUserName, 'Got it')
 })
 
-bot.run()*/
+
+function initIPC() {
+  ipcMain.on('request_login', (event) => {
+    bot.run()
+  });
+
+};
+
+initialize()
+initIPC()
+
+
+
+
