@@ -18,7 +18,7 @@ function initialize () {
     }
 
     mainWindow = new BrowserWindow(windowOptions)
-    mainWindow.loadURL(path.join('file://', __dirname, '/windows/views/mainwindows.html'))
+    mainWindow.loadURL(path.join('file://', __dirname, '/windows/views/mainwindow.html'))
 
     // Launch fullscreen with DevTools open, usage: npm run debug
     if (debug) {
