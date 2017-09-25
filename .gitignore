@@ -8,3 +8,5 @@ node_modules
 
 *.sublime-project
 *.sublime-workspace
+.cookie.json
+.secret.json
