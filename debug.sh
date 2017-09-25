@@ -1,0 +1,1 @@
+DEBUG=weixinbot ./node_modules/electron/dist/electron src/main.js

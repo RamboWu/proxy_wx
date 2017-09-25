@@ -17,7 +17,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/geeeeeeeeek/wechat-electron.git"
+    "url": "https://github.com/RamboWu/proxy_wx.git"
   },
   "keywords": [
     "Electron",
@@ -25,12 +25,12 @@
     "微信",
     "Web"
   ],
-  "author": "Zhongyi Tong",
+  "author": "Peifeng Wu",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/geeeeeeeeek/wechat-electron/issues"
+    "url": "https://github.com/RamboWu/proxy_wx/issues"
   },
-  "homepage": "https://github.com/geeeeeeeeek/wechat-electron/",
+  "homepage": "https://github.com/RamboWu/proxy_wx",
   "dependencies": {
     "electron": "1.4.15",
     "electron-localshortcut": "1.1.0",
