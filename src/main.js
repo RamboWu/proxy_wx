@@ -1,6 +1,5 @@
 'use strict';
 
-import fs from 'fs';
 const path = require('path');
 const {app, ipcMain, BrowserWindow} = require('electron');
 
@@ -50,7 +49,7 @@ function initialize () {
   })
 }
 
-const Weixinbot = require('weixinbot')
+const Weixinbot = require('./wechat/weixinbot')
 
 // will send qrcode to your email address
 const bot = new Weixinbot()
