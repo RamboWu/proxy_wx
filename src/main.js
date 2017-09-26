@@ -1,5 +1,6 @@
 'use strict';
 
+import fs from 'fs';
 const path = require('path');
 const {app, ipcMain, BrowserWindow} = require('electron');
 
