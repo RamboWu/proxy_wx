@@ -1,7 +1,7 @@
 {
-  "name": "electronic-wechat",
-  "version": "2.0.0",
-  "description": "An Electron application for WeChat",
+  "name": "proxy_wechat",
+  "version": "0.0.1",
+  "description": "self modification for wechat",
   "main": "src/main.js",
   "scripts": {
     "start": "electron src/main.js",
